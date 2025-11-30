@@ -13,7 +13,7 @@
 const router = useRouter()
 
 const direct = () => {
-    router.push('/list')
+    router.push('/collection/add')
 }
 
 </script>
