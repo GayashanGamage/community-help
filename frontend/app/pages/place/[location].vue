@@ -1,6 +1,6 @@
 <template>
     <Menubar></Menubar>
-    <div class="flex flex-col gap-12 w-7xl h-[90vh] mx-auto py-10 px-2">
+    <div class="flex flex-col gap-12 max-w-7xl h-[90vh] mx-auto py-10 px-2">
         <h1 class="font-medium text-xl">Collection points in <span class="font-black">{{ route.params.location }}</span></h1>
         
         <!-- filter section -->

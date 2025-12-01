@@ -6,6 +6,12 @@
                 <h4 class="title-three text-center">Add collection point</h4>
                 <div class="flex flex-col gap-6">
                     <div class="flex flex-col gap-2">
+                        <label for="name" class="input-label-one">Organization type</label>
+                        <div class="flex flex-row gap-2 flex-wrap">
+                            <p class="border py-1 px-2 rounded-md border-gray-300 cursor-default" :class="collectionstore.organization == item ? 'bg-black text-white' : 'bg-white text-black'" v-for="item in collectionstore.organizationTypes" @click="collectionstore.organization = item">{{ item }}</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2">
                         <label for="name" class="input-label-one">First Name</label>
                         <input id="name" type="text" class="input-one" placeholder="Nimesh waduge" spellcheck="false">
                     </div>
@@ -20,5 +26,10 @@
     </div>
 </template>
 <script setup>
+import { useCollectionPointStore } from '@/store/collectionpoint';
+
 const router = useRouter()
+
+const collectionstore = useCollectionPointStore()
+
 </script>
