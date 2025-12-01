@@ -12,7 +12,7 @@
                         <hr class="">
                     </div>
                     <div class="flex flex-row gap-2 flex-wrap">
-                        <p class="input-btn-selection" v-for="item in itemList" @click="addItems(item)">{{ item }}</p>
+                        <p class="input-btn-selection" :class="collectionPoints.collectItems.includes(item) ? 'bg-black text-white' : 'bg-white text-black'" v-for="item in itemList" @click="addItems(item)">{{ item }}</p>
                     </div>
                 </div>
 
@@ -26,16 +26,21 @@
                         <div class="flex flex-col gap-2">
                             <p class="input-label-one">District</p>
                             <div class="flex flex-row gap-2 flex-wrap">
-                                <p class="input-btn-selection" v-for="item in collectionPoints.allDisctrict">{{ item.location }}</p>
+                                <p class="input-btn-selection" :class="collectionPoints.district == item.value ? 'bg-black text-white' : 'bg-white text-black'" v-for="item in collectionPoints.allDisctrict" @click="selectDisctrict(item.value)">{{ item.location }}</p>
                             </div>
                         </div>
                         <div class="input-one-container">
                             <p class="input-label-one">Town</p>
-                            <input type="text" class="input-one">
-                        </div>
+                            <input type="text" class="input-one" v-model="collectionPoints.town">
+                        </div>Location-specific Information
+
                         <div class="input-one-container">
                             <p class="input-label-one">Nearest place</p>
-                            <input type="text" class="input-one">
+                            <input type="text" class="input-one" v-model="collectionPoints.nearestPlace">
+                        </div>
+                        <div class="input-one-container" v-if="collectionPoints.district != null && collectionPoints.town != null && collectionPoints.nearestPlace != null">
+                            <p class="input-label-one">Your exact location</p>
+                            <button class="btn-three" @click="getLocation">{{ collectionPoints.geoLocation == null ? 'Not set yet' : 'Seted' }}</button>
                         </div>
                     </div>
                 </div>
@@ -70,7 +75,9 @@
 </template>
 
 <script setup>
-import { useCollectionPointStore } from '~/store/collectionpoint';
+// import { useCollectionPointStore } from '~/store/collectionpoint.js'
+import { useCollectionPointStore } from '@/store/collectionpoint'
+
 
 const collectionPoints = useCollectionPointStore()
 
@@ -103,8 +110,34 @@ const itemList = ref([
 ])
 
 const addItems = (i) => {
-    console.log(i)
-    collectionPoints.value.collectItems.push(i)
+    // check if items is available or not. then push to the selected items
+    if(!collectionPoints.collectItems.includes(i)){
+        collectionPoints.collectItems.push(i)
+    }else if(collectionPoints.collectItems.includes(i)){
+        collectionPoints.collectItems = collectionPoints.collectItems.filter((item) => item != i)
+    }
+    
+}
+
+const selectDisctrict = (i) => {
+    collectionPoints.district = i
+}
+
+const getLocation = () => {
+    if(navigator.geolocation){
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                collectionPoints.geoLocation = [position.coords.latitude,  position.coords.longitude]
+                // console.log('Lat:', position.coords.latitude)
+                // console.log('Lng:', position.coords.longitude)
+            },
+            (error) => {
+                console.error('Error:', error.message)
+            }
+        )
+    }else{
+        console.error('Geolocation not supported')
+    }
 }
 
 </script>
