@@ -27,5 +27,13 @@ export const useCollectionPointStore = defineStore('collectionpoint', () => {
         { location: 'Vavuniya', value: 'vavuniya' }
     ])
 
-  return { allDisctrict  }
+    const collectItems = ref([])
+    const district = ref(null)
+    const town = ref(null)
+    const nearestPlace = ref(null)
+    const distributedTo = ref(null)
+    const deliveryMethod = ref(null)
+    const endDate = ref(null)
+
+  return { allDisctrict, collectItems, district, town, nearestPlace, distributedTo, deliveryMethod, endDate }
 })

@@ -1,0 +1,46 @@
+/* @import "tailwindcss"; */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* card section------------------------------------------- */
+.card-outline-one {
+  @apply border border-gray-200 p-6 rounded-md shadow-sm
+}
+
+
+/* input section------------------------------------------- */
+.input-one {
+  @apply border border-gray-300 py-1 px-6 rounded-md text-lg focus:outline-none
+}
+.input-two {
+  /* this is ony used for the OPT section */
+  @apply border border-gray-300 py-2 px-3 rounded-md text-lg focus:outline-none text-center
+}
+
+.input-one-container{
+  @apply flex flex-col gap-2 w-96
+}
+
+.input-label-one {
+  @apply text-sm font-semibold text-gray-500
+}
+
+.input-btn-selection {
+  @apply border border-gray-300 py-2 px-6 rounded-full
+}
+
+/* title section------------------------------------------- */
+.title-three{
+  @apply font-black text-2xl
+}
+.title-four{
+  @apply font-black text-xl text-black/80
+}
+
+
+/* button section------------------------------------------- */
+.btn-three {
+  @apply bg-black text-white py-2 rounded-md border hover:bg-black/80
+}

@@ -1,69 +1,69 @@
 <template>
     <div class="">
         <Menubar></Menubar>
-        <div class="flex flex-col justify-center items-center gap-12 w-7xl h-[90vh] py-4 px-2 mx-auto">
-            <div class="border flex flex-col gap-4 p-4">
-                <h1 class="text-center">Infomation about collection point</h1>
-                
-                <!-- location infomation -->
-                <div class="">
-                    <div class="">
-                        <h3 class="">Location infomations</h3>
-                        <hr class="">
-                    </div>
-                    <div class="">
-                        <div class="">
-                            <p class="">District</p>
-                            <div class="flex flex-row gap-4 flex-wrap">
-                                <p class="border" v-for="item in collectionPoints.allDisctrict">{{ item.location }}</p>
-                            </div>
-                        </div>
-                        <div class="">
-                            <p class="">Town</p>
-                            <input type="text" class="border">
-                        </div>
-                        <div class="">
-                            <p class="">Nearest place</p>
-                            <input type="text" class="border">
-                        </div>
-                    </div>
-                </div>
+        <div class="flex flex-col justify-center items-center gap-12 w-7xl h-auto py-4 px-2 mx-auto">
+            <div class="card-outline-one max-w-7xl flex flex-col gap-10">
+                <h1 class="title-three text-center">Infomation about collection point</h1>
                 
                 <!-- collect item infomations -->
-                <div class="">
-                    <div class="">
-                        <h3 class="">Collect items list</h3>
+                <div class="flex flex-col gap-6">
+                    <div class="flex flex-col gap-2">
+                        <h3 class="title-four">Collect items list</h3>
                         <hr class="">
                     </div>
-                    <div class="flex flex-row gap-4 flex-wrap">
-                        <p class="border" v-for="item in itemList">{{ item }}</p>
+                    <div class="flex flex-row gap-2 flex-wrap">
+                        <p class="input-btn-selection" v-for="item in itemList" @click="addItems(item)">{{ item }}</p>
+                    </div>
+                </div>
+
+                <!-- location infomation -->
+                <div class="flex flex-col gap-6">
+                    <div class="flex flex-col gap-2">
+                        <h3 class="title-four">Location infomations</h3>
+                        <hr class="">
+                    </div>
+                    <div class="flex flex-col gap-4">
+                        <div class="flex flex-col gap-2">
+                            <p class="input-label-one">District</p>
+                            <div class="flex flex-row gap-2 flex-wrap">
+                                <p class="input-btn-selection" v-for="item in collectionPoints.allDisctrict">{{ item.location }}</p>
+                            </div>
+                        </div>
+                        <div class="input-one-container">
+                            <p class="input-label-one">Town</p>
+                            <input type="text" class="input-one">
+                        </div>
+                        <div class="input-one-container">
+                            <p class="input-label-one">Nearest place</p>
+                            <input type="text" class="input-one">
+                        </div>
                     </div>
                 </div>
 
                 <!-- other infomation -->
-                <div class="">
-                    <div class="">
-                        <h3 class="">Other</h3>
+                <div class="flex flex-col gap-6">
+                    <div class="flex flex-col gap-2">
+                        <h3 class="title-four">Other</h3>
                         <hr class="">
                     </div>
-                    <div class="">
-                        <div class="">
-                            <p class="">Where to distribute</p>
-                            <input type="text" class="border">
+                    <div class="flex flex-col gap-4">
+                        <div class="input-one-container">
+                            <p class="input-label-one">Where to distribute</p>
+                            <input type="text" class="input-one">
                         </div>
-                        <div class="">
-                            <p class="">How to deliver</p>
-                            <input type="text" class="border">
+                        <div class="input-one-container">
+                            <p class="input-label-one">How to deliver</p>
+                            <input type="text" class="input-one">
                         </div>
-                        <div class="">
-                            <p class="">End date</p>
-                            <input type="text" class="border">
+                        <div class="input-one-container">
+                            <p class="input-label-one">End date</p>
+                            <input type="date" class="input-one">
                         </div>
                     </div>
                 </div>
 
                 <!-- action button -->
-                <button class="">Sumite</button>
+                <button class="btn-three w-full">Sumite</button>
             </div>
         </div>
     </div>
@@ -101,4 +101,10 @@ const itemList = ref([
     'Torch',
     'Batteries'
 ])
+
+const addItems = (i) => {
+    console.log(i)
+    collectionPoints.value.collectItems.push(i)
+}
+
 </script>
