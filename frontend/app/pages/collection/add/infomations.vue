@@ -12,7 +12,7 @@
                         <hr class="">
                     </div>
                     <div class="flex flex-row gap-2 flex-wrap">
-                        <p class="input-btn-selection" :class="collectionPoints.collectItems.includes(item) ? 'bg-black text-white' : 'bg-white text-black'" v-for="item in itemList" @click="addItems(item)">{{ item }}</p>
+                        <p class="input-btn-selection cursor-default" :class="collectionPoints.collectItems.includes(item) ? 'bg-black text-white' : 'bg-white text-black'" v-for="item in itemList" @click="addItems(item)">{{ item }}</p>
                     </div>
                 </div>
 
@@ -26,7 +26,7 @@
                         <div class="flex flex-col gap-2">
                             <p class="input-label-one">District</p>
                             <div class="flex flex-row gap-2 flex-wrap">
-                                <p class="input-btn-selection" :class="collectionPoints.district == item.value ? 'bg-black text-white' : 'bg-white text-black'" v-for="item in collectionPoints.allDisctrict" @click="selectDisctrict(item.value)">{{ item.location }}</p>
+                                <p class="input-btn-selection cursor-default" :class="collectionPoints.district == item.value ? 'bg-black text-white' : 'bg-white text-black'" v-for="item in collectionPoints.allDisctrict" @click="selectDisctrict(item.value)">{{ item.location }}</p>
                             </div>
                         </div>
                         <div class="input-one-container">
