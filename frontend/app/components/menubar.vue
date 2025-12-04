@@ -9,11 +9,14 @@
 </template>
 
 <script setup>
+import { useCollectionPointStore } from '@/store/collectionpoint'
+
 
 const router = useRouter()
+const collectionstore = useCollectionPointStore()
 
-const direct = () => {
-    router.push('/collection/add')
+const direct = async () => {
+    navigateTo('/collection/add')
 }
 
 </script>

@@ -13,19 +13,18 @@
         <hr class="border-gray-200">
         
         <!-- location list -->
-        <div class="grid grid-cols-1 gap-6">
-            <div class="grid grid-cols-10 gap-2 h-fit border p-2 rounded-md border-gray-200 shadow-md" v-for="(item, index) in locationDetials">
-                <img src="" alt="" class="col-span-3 border border-gray-200 rounded-md">
-                <div class="flex flex-col gap-3 col-span-7">
+        <div class="grid grid-cols-2 gap-6">
+            <div class="grid grid-cols-10 gap-2 h-fit border p-2 rounded-md border-gray-200 shadow-md" v-for="(item, index) in collectionstore.loadedDistrict">
+                <div class="flex flex-col gap-3 col-span-10">
                     <!-- organization type -->
                     <div class="">
-                        <p class="font-light">Organized by <span class=" ml-10 border border-gray-300 py-1 px-4 rounded-full text-gray-800 text-sm">{{ item.organizeBy }}</span></p>
+                        <p class="font-light">Organized by <span class=" ml-10 border border-gray-300 py-1 px-4 rounded-full text-gray-800 text-sm">{{ item.organization_type }}</span></p>
                     </div>
 
                     <!-- organization contacts -->
                     <div class="flex flex-row justify-between">
-                        <p class="font-light">Organizer : <span class="font-semibold text-lg">{{ item.organizerName }}</span></p>
-                        <p class="font-light">Contact : <span class="font-semibold text-lg">{{ item.contactNumber }}</span></p>
+                        <p class="font-light">Organizer : <span class="font-semibold text-lg">{{ item.first_name }}</span></p>
+                        <p class="font-light">Contact : <span class="font-semibold text-lg">{{ item.mobile_number }}</span></p>
                     </div>
 
                     <!-- location -->
@@ -34,7 +33,7 @@
                             <p class="font-light">District : <span class="font-semibold text-lg">{{ item.district }}</span></p>
                             <p class="font-light">Town : <span class="font-semibold text-lg">{{ item.town }}</span></p>
                         </div>
-                        <p class="font-light">nearest place : <span class="font-semibold text-lg">{{ item.nearestLocation }}</span></p>
+                        <p class="font-light">exact place : <span class="font-semibold text-lg">{{ item.exact_place }}</span></p>
                     </div>
 
                     <!-- action button -->
@@ -43,15 +42,14 @@
                     <!-- hidden content -->
                     <div class="" :class="index == selectedCollectionPoint ? 'block' : 'hidden'">
                         <div class="flex felx-row justify-between">
-                            <p class="font-light">Where to deliver <span class="font-semibold text-lg">{{ item.deliveryLocation }}</span></p>
-                            <p class="font-light">Delivery methord <span class="font-semibold text-lg">{{ item.deliveryMethod }}</span></p>
+                            <p class="font-light">Where to deliver <span class="font-semibold text-lg">{{ item.distributed_to }}</span></p>
                         </div>
 
                         <!-- collection items -->
                         <div class="flex flex-col gap-2 py-2">
                             <h4 class="font-light">Collected Items</h4>
                             <div class="flex flex-row gap-4 flex-wrap">
-                                <p class="border border-gray-200 py-1 px-4 rounded-md bg-gray-200" v-for="i in item.accepteList">{{ i }}</p>
+                                <p class="border border-gray-200 py-1 px-4 rounded-md bg-gray-200" v-for="i in item.item_list">{{ i }}</p>
                             </div>
                         </div>
                     </div>
@@ -64,9 +62,15 @@
 </template>
 
 <script setup>
+import { useCollectionPointStore } from '@/store/collectionpoint'
+
+const router = useRouter()
+const collectionstore = useCollectionPointStore()
+
 const route =  useRoute()
 const selectedCollectionPoint = ref(null)
-const selectedFiter = ref(0)
+const selectedFiter = ref(null)
+const config = useRuntimeConfig()
 const filters = ref(
     [
         {
@@ -96,48 +100,12 @@ const filters = ref(
     ]
 )
 
-const locationDetials = ref(
-    [
-        {
-            image : '',
-            organizeBy : 'Individual',
-            organizerName : 'Kalinga',
-            contactNumber : '0717374076',
-            district : 'galle',
-            town : 'udugama',
-            nearestLocation : 'infront of udugama maha vidyalaya',
-            accepteList : ['cloths', 'shampoo', 'weifo'],
-            deliveryLocation : 'Kandy - Galaha',
-            deliveryMethod : 'By lorry',
-            end : '2025.12.02'
-        },
-        {
-            image : '',
-            organizeBy : 'Individual',
-            organizerName : 'Kalinga',
-            contactNumber : '0717374076',
-            district : 'galle',
-            town : 'udugama',
-            nearestLocation : 'infront of udugama maha vidyalaya',
-            accepteList : ['cloths', 'shampoo', 'weifo'],
-            deliveryLocation : 'Kandy - Galaha',
-            deliveryMethod : 'By lorry',
-            end : '2025.12.02'
-        },
-        {
-            image : '',
-            organizeBy : 'Individual',
-            organizerName : 'Kalinga',
-            contactNumber : '0717374076',
-            district : 'galle',
-            town : 'udugama',
-            nearestLocation : 'infront of udugama maha vidyalaya',
-            accepteList : ['cloths', 'shampoo', 'weifo'],
-            deliveryLocation : 'Kandy - Galaha',
-            deliveryMethod : 'By lorry',
-            end : '2025.12.02'
-        },
-    ]
-)
+
+
+const { data:locationListRef } = await useFetch(`${config.public.url}/location/${route.params.location}`)
+
+if(locationListRef.value){
+    collectionstore.loadedDistrict = locationListRef.value.locations
+}
 
 </script>

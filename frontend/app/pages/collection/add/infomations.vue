@@ -54,21 +54,21 @@
                     <div class="flex flex-col gap-4">
                         <div class="input-one-container">
                             <p class="input-label-one">Where to distribute</p>
-                            <input type="text" class="input-one">
-                        </div>
-                        <div class="input-one-container">
-                            <p class="input-label-one">How to deliver</p>
-                            <input type="text" class="input-one">
+                            <input type="text" class="input-one" v-model="collectionPoints.distributedTo">
                         </div>
                         <div class="input-one-container">
                             <p class="input-label-one">End date</p>
-                            <input type="date" class="input-one">
+                            <input type="date" class="input-one" v-model="collectionPoints.endDate">
+                        </div>
+                        <div class="input-one-container">
+                            <p class="input-label-one">Description</p>
+                            <textarea type="date" class="input-one" v-model="collectionPoints.description"/>
                         </div>
                     </div>
                 </div>
 
                 <!-- action button -->
-                <button class="btn-three w-full">Sumite</button>
+                <button class="btn-three w-full" @click="addCollectionPoint">Sumite</button>
             </div>
         </div>
     </div>
@@ -77,7 +77,8 @@
 <script setup>
 // import { useCollectionPointStore } from '~/store/collectionpoint.js'
 import { useCollectionPointStore } from '@/store/collectionpoint'
-
+import { useCookie } from '#app'
+const config =  useRuntimeConfig()
 
 const collectionPoints = useCollectionPointStore()
 
@@ -137,6 +138,56 @@ const getLocation = () => {
         )
     }else{
         console.error('Geolocation not supported')
+    }
+}
+
+const resetPiniaStore = () => {
+    collectionPoints.collectItems = [],
+    collectionPoints.district = null,
+    collectionPoints.town = null,
+    collectionPoints.nearestPlace = null,
+    collectionPoints.geoLocation = null,
+    collectionPoints.distributedTo = null,
+    collectionPoints.description = null,
+    collectionPoints.endDate = null
+}
+
+const addCollectionPoint = async () => {
+
+    // create object for the API requerest body
+    const createUserApiBody = {
+        "item_list": collectionPoints.collectItems,
+        "district": collectionPoints.district,
+        "town": collectionPoints.town,
+        "exact_place": collectionPoints.nearestPlace,
+        "cordination": collectionPoints.geoLocation,
+        "distributed_to": collectionPoints.distributedTo,
+        "descriptions": collectionPoints.description,
+        "end_date": collectionPoints.endDate
+    }
+    
+    const token = useCookie('token').value
+    console.log(token)
+    console.log(createUserApiBody)
+
+    try{
+        const response = await $fetch(
+            `${config.public.url}/details`, 
+            {
+                method : 'POST',
+                body : createUserApiBody,
+                headers: {
+                    'Authorization': `Bearer ${token}`, 
+                    'Content-Type': 'application/json',
+                }
+            },
+        )
+        // success
+        alert('item add succesfully')
+        resetPiniaStore()
+
+    }catch(error){
+        console.log(`this is the error ${error}`)
     }
 }
 

@@ -43,10 +43,15 @@ export const useCollectionPointStore = defineStore('collectionpoint', () => {
     const geoLocation = ref(null)
     const nearestPlace = ref(null)
     const distributedTo = ref(null)
-    const deliveryMethod = ref(null)
+    // const deliveryMethod = ref(null)
     const endDate = ref(null)
-    const organization = ref()
+    const organization = ref(null)
+    const firstName = ref(null)
+    const mobileNumber = ref(null)
+    const description = ref(null)
+    const getLocaitonDetails = ref(null)
+    const allLocationList = ref([])
+    const loadedDistrict = ref(null)
 
-
-  return { allDisctrict, collectItems, district, town, nearestPlace, distributedTo, deliveryMethod, endDate, geoLocation, organizationTypes, organization }
+  return { allDisctrict, collectItems, district, town, nearestPlace, distributedTo, endDate, geoLocation, organizationTypes, organization, firstName, mobileNumber, description, getLocaitonDetails, allLocationList, loadedDistrict }
 })

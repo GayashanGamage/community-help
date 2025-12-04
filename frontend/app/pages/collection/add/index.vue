@@ -13,23 +13,73 @@
                     </div>
                     <div class="flex flex-col gap-2">
                         <label for="name" class="input-label-one">First Name</label>
-                        <input id="name" type="text" class="input-one" placeholder="Nimesh waduge" spellcheck="false">
+                        <input id="name" type="text" class="input-one" placeholder="Nimesh waduge" spellcheck="false" v-model="collectionstore.firstName">
                     </div>
                     <div class="flex flex-col gap-2">
                         <label for="name" class="input-label-one">Mobile number</label>
-                        <input type="text" class="input-one" placeholder="071 000 0000">
+                        <input type="text" class="input-one" placeholder="071 000 0000" v-model="collectionstore.mobileNumber">
                     </div>
                 </div>
-                <button class="btn-three" @click="router.push('/collection/add/otp')">Vefiry Mobile Number</button>
+                <button class="btn-three" @click="createUser">Vefiry Mobile Number</button>
             </div>
         </div>
     </div>
 </template>
+
 <script setup>
 import { useCollectionPointStore } from '@/store/collectionpoint';
 
 const router = useRouter()
 
 const collectionstore = useCollectionPointStore()
+const config =  useRuntimeConfig()
+
+const pageReDirection = () => {
+    // this is for redirect to another page
+    router.push('/collection/add/otp')
+}
+
+const clearPiniaStore = () => {
+    // this is for clear pinia store unwanted data
+
+    collectionstore.firstName = null
+    collectionstore.organization = null
+}
+
+const createUser = async () => {
+
+    // create object for the API requerest body
+    const createUserApiBody = {
+        "organization_type": collectionstore.organization,
+        "first_name": collectionstore.firstName,
+        "mobile_number": collectionstore.mobileNumber,
+    }
+    
+    try{
+        const response = await $fetch(
+            `${config.public.url}/createaccount`, 
+            {
+                method : 'POST',
+                body : createUserApiBody
+            }
+        )
+
+        // success api requres
+        console.log('acceount creation success')
+        localStorage.setItem('mobileNumber', collectionstore.mobileNumber) //store mobile number in local storage
+        clearPiniaStore()
+        pageReDirection()
+
+    }catch(error){
+        console.log(`this is the error ${error}`)
+    }
+}
+
+onBeforeMount(() => {
+    if(localStorage.getItem('mobileNumber')){
+        collectionstore.mobileNumber = localStorage.getItem('mobileNumber')
+        return navigateTo('/collection/add/otp')
+    }
+})
 
 </script>

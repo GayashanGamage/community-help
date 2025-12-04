@@ -24,6 +24,7 @@
 </template>
 
 <script setup>
+
 import { useCollectionPointStore } from '~/store/collectionpoint';
 
 const locationPopup = ref(false)

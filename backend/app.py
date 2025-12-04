@@ -11,8 +11,19 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi import Depends
 from typing import Annotated
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
+print(
+    os.getenv('localone'), 
+    os.getenv('localtwo'), 
+    os.getenv('localthree'), 
+    os.getenv('localfour'), 
+    os.getenv('frontendone'), 
+    os.getenv('frontendtwo'), 
+    os.getenv('frontendthree'), 
+    os.getenv('frontendfour'),
+)
 
 client = MongoClient(os.getenv("uri"))
 db = client['grocerycollectlocations']
@@ -20,22 +31,41 @@ grocerycollection = db['grocerycollection']
 
 app = FastAPI()
 
+origins = [
+    # os.getenv('localone'), 
+    # os.getenv('localtwo'), 
+    # os.getenv('localthree'), 
+    # os.getenv('localfour'), 
+    os.getenv('frontendone'), 
+    os.getenv('frontendtwo'), 
+    os.getenv('frontendthree'), 
+    os.getenv('frontendfour'), 
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # pydantic models for evaluating data --------------------------------------------------------------
 class organizerDetails(BaseModel):
     organization_type: str
     first_name: str
     mobile_number: str
-    verified: bool = Field(default=False)
-    created_at : datetime = Field(default_factory=lambda:datetime.now())
-    code: Optional[int] = Field(default=0)
+    verified: Optional[bool] = Field(default=False)
+    created_at : Optional[datetime] = Field(default_factory=lambda:datetime.now())
+    code: Optional[int] = Field(default_factory=lambda:random.randint(1000, 9999))
     code_send_time : datetime = Field(default_factory=lambda:datetime.now())
     accepted : Optional[bool] = Field(default=False)
 
-    @field_validator('code', mode='before')
-    def generate_code(cls, v):
-        if v == 0:
-            return random.randint(1000, 9999)
-        return 
+    # @field_validator('code', mode='before')
+    # def generate_code(cls, v):
+    #     if v == 0:
+    #         return random.randint(1000, 9999)
+    #     return 
 
 class verificationCode(BaseModel):
     mobile_number: str
@@ -49,8 +79,8 @@ class details(BaseModel):
     town : str
     exact_place : str
     cordination : List[float]
-    distributed_to : List[str]
-    descriptions : List[str]
+    distributed_to : str
+    descriptions : str
     archived : Optional[bool] = Field(default=False)
     end_date : Optional[datetime] = Field(default_factory=lambda: datetime.now(timezone.utc) + timedelta(hours=5, minutes=30))
 
@@ -132,6 +162,7 @@ def locationSerializer(locationList):
             'district': location['district'],
             'town': location['town'],
             'exact_place': location['exact_place'],
+            'cordination' : location['cordination'],
             'descriptions': location['descriptions'],
             'distributed_to' : location['distributed_to'],
             'archived' : location['archived'],
@@ -144,7 +175,7 @@ def locationSerializer(locationList):
         locations.append(location_info)
     return locations
 
-# authontications --------------------------------------------------------------------------
+# authontications ------------------------------------------mobile_number--------------------------------
 security = HTTPBearer()
 
 def encodeToken(mobile):
@@ -268,3 +299,35 @@ async def getDistrictLocations(district: str):
     data = getAllLocationByDistrict(district)
     locations = locationSerializer(data)
     return JSONResponse(status_code=200, content={'message' : 'successfull', 'locations': locations})
+
+@app.patch('/resendcode/{mobile_number}')
+async def resendCode(mobile_number: str):
+    # 1. check mobile number is in the database
+    # 2. if not send error message
+    # 3. if available, check the send time more than 15 minutes and note verified
+    # 4. if more that send again
+    # 5. else send error message
+    locationData = getLocaitonData(mobile_number)
+    if locationData['status'] == False:
+        return JSONResponse(status_code=400, content={'message' : 'number not found'})
+    elif locationData['status'] == True and locationData['data']['verified'] == True:
+        return JSONResponse(status_code=400, content={'message' : 'number alredy verified'})
+    elif locationData['status'] == True and locationData['data']['verified'] == False:
+        currentTime = getCurrentTimeUTC()
+        if (currentTime - locationData["data"]["code_send_time"]).total_seconds()/60 > 10.0:
+            new_code = random.randint(1000, 9999)
+            updateData = {
+                'code' : new_code,
+                'code_send_time' : currentTime
+            }
+            updateOTP = updateDatabase(mobile_number, updateData)
+            if updateOTP:
+                sendOPT = sendVerification(new_code, mobile_number)
+                if sendOPT:
+                    return JSONResponse(status_code=200, content={'message' : 'OTP send'})
+                else:
+                    return JSONResponse(status_code=500, content={'message' : 'something go wrong'})
+            else:
+                return JSONResponse(status_code=500, content={'message' : 'something go wrong'})
+        else:
+            return JSONResponse(status_code=400, content={'message' : 'use alredy sent code'})
